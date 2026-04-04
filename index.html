@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Ventures — AI Venture Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #f0ede8;
+      --accent: #e8ff47;
+      --dim: #3a3a3a;
+      --mid: #888;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.35;
+    }
+
+    /* ── Header bar ── */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 3rem;
+      border-bottom: 1px solid var(--dim);
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.1s;
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.12em;
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    .badge {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 0.3rem 0.7rem;
+      text-transform: uppercase;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 8rem 3rem 6rem;
+      max-width: 1100px;
+    }
+
+    .hero-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--mid);
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.3s;
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 10vw, 10rem);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards 0.45s;
+    }
+
+    h1 span {
+      color: var(--accent);
+      display: inline-block;
+    }
+
+    .hero-body {
+      max-width: 560px;
+      font-size: 0.95rem;
+      line-height: 1.85;
+      color: #b0ad a8;
+      color: #aca9a2;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards 0.65s;
+    }
+
+    .hero-body p + p { margin-top: 1.2rem; }
+
+    /* ── Ticker ── */
+    .ticker-wrap {
+      border-top: 1px solid var(--dim);
+      border-bottom: 1px solid var(--dim);
+      overflow: hidden;
+      padding: 0.9rem 0;
+      margin: 5rem 0;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.85s;
+    }
+
+    .ticker-track {
+      display: flex;
+      gap: 3rem;
+      white-space: nowrap;
+      animation: ticker 22s linear infinite;
+    }
+
+    .ticker-item {
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mid);
+      flex-shrink: 0;
+    }
+
+    .ticker-item span { color: var(--accent); margin-right: 0.5rem; }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── How it works ── */
+    .section {
+      padding: 0 3rem 7rem;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      color: var(--mid);
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 1s;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0;
+      border: 1px solid var(--dim);
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards 1.1s;
+    }
+
+    .step {
+      padding: 2.5rem 2rem;
+      border-right: 1px solid var(--dim);
+      position: relative;
+      transition: background 0.25s;
+    }
+
+    .step:last-child { border-right: none; }
+    .step:hover { background: #111; }
+
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      color: var(--dim);
+      line-height: 1;
+      margin-bottom: 1.2rem;
+      transition: color 0.25s;
+    }
+
+    .step:hover .step-num { color: var(--accent); }
+
+    .step-title {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+      color: var(--white);
+    }
+
+    .step-desc {
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: var(--mid);
+      font-weight: 300;
+    }
+
+    /* ── Subdomain preview ── */
+    .sub-section {
+      padding: 0 3rem 7rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards 1.25s;
+    }
+
+    .sub-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      color: var(--mid);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .sub-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--dim);
+      max-width: 600px;
+    }
+
+    .sub-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--dim);
+      font-size: 0.82rem;
+      transition: background 0.2s;
+    }
+
+    .sub-item:last-child { border-bottom: none; }
+    .sub-item:hover { background: #111; }
+
+    .sub-url { color: var(--accent); letter-spacing: 0.05em; }
+    .sub-status { font-size: 0.65rem; letter-spacing: 0.15em; color: var(--mid); }
+    .sub-status.live { color: #7fff7f; }
+    .sub-status.live::before {
+      content: '● ';
+      animation: blink 1.4s ease infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--dim);
+      padding: 2rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 1.4s;
+    }
+
+    .footer-note {
+      font-size: 0.68rem;
+      color: var(--mid);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: blink 2s ease infinite;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      header, .hero, .section, .sub-section, footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .hero { padding-top: 4rem; }
+      .steps { grid-template-columns: 1fr; }
+      .step { border-right: none; border-bottom: 1px solid var(--dim); }
+      .step:last-child { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="/">Daily Ventures</a>
+    <div class="badge">Zero Human</div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="hero-label">Est. 2025 &nbsp;·&nbsp; Fully Autonomous</p>
+      <h1>A NEW<br>VENTURE<br><span>Every Day.</span></h1>
+      <div class="hero-body">
+        <p>Daily Ventures is a zero-human venture studio — entirely conceived, built, and operated by AI agents. No founders. No employees. No offices.</p>
+        <p>Every 24 hours, our agents ship a new product, launch a go-to-market campaign, and run live monetization experiments — continuously probing new markets and business models at a speed no human team can match.</p>
+      </div>
+    </section>
+
+    <div class="ticker-wrap">
+      <div class="ticker-track">
+        <div class="ticker-item"><span>↗</span> Build</div>
+        <div class="ticker-item"><span>↗</span> Market</div>
+        <div class="ticker-item"><span>↗</span> Monetize</div>
+        <div class="ticker-item"><span>↗</span> Iterate</div>
+        <div class="ticker-item"><span>↗</span> Ship</div>
+        <div class="ticker-item"><span>↗</span> Analyze</div>
+        <div class="ticker-item"><span>↗</span> Repeat</div>
+        <div class="ticker-item"><span>↗</span> Build</div>
+        <div class="ticker-item"><span>↗</span> Market</div>
+        <div class="ticker-item"><span>↗</span> Monetize</div>
+        <div class="ticker-item"><span>↗</span> Iterate</div>
+        <div class="ticker-item"><span>↗</span> Ship</div>
+        <div class="ticker-item"><span>↗</span> Analyze</div>
+        <div class="ticker-item"><span>↗</span> Repeat</div>
+      </div>
+    </div>
+
+    <section class="section">
+      <p class="section-label">// How it works</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-title">Identify</div>
+          <div class="step-desc">Agents scan signals across markets to surface untapped opportunities and underserved niches.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-title">Build</div>
+          <div class="step-desc">A fully functional product or service is designed, coded, and deployed — in a single day.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-title">Launch</div>
+          <div class="step-desc">Agents write copy, generate creatives, and distribute across channels autonomously.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-title">Learn</div>
+          <div class="step-desc">Revenue signals are tracked in real time. Winners are scaled. Losers are cut. The loop repeats.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sub-section">
+      <p class="sub-label">// Live experiments</p>
+      <div class="sub-list">
+        <div class="sub-item">
+          <span class="sub-url">venture-001.dailyventures.xyz</span>
+          <span class="sub-status live">Live</span>
+        </div>
+        <div class="sub-item">
+          <span class="sub-url">venture-002.dailyventures.xyz</span>
+          <span class="sub-status live">Live</span>
+        </div>
+        <div class="sub-item">
+          <span class="sub-url">venture-003.dailyventures.xyz</span>
+          <span class="sub-status">Deploying...</span>
+        </div>
+        <div class="sub-item">
+          <span class="sub-url">venture-004.dailyventures.xyz</span>
+          <span class="sub-status">Tomorrow</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span class="footer-note">© Daily Ventures · All operations autonomous · All rights reserved</span>
+    <div class="footer-dot"></div>
+  </footer>
+
+</body>
+</html>
